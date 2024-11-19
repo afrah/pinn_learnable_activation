@@ -43,20 +43,20 @@ python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_e
 
 # Wave
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem wave - --weights [100 , 100, 1] --network [3, 50, 50, 50, 3] 
+python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem wave - --weights [100.0, 100.0, 1.0] --network [2, 10, 30, 10, 1]
 
 # Helmholtz
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh  --problem helmholtz --weights [100 , 1] --network [3, 50, 50, 50, 3] 
+python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh  --problem helmholtz --weights [10.0, 1.0] --network  [2, 30, 30, 30, 1]
 
 # Klein_gordon
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem klein_gordon  --weights [100 , 1] --network [3, 50, 50, 50, 3]
+python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem klein_gordon  --weights  [50.0, 50.0, 1.0]--network [2, 30, 30, 30, 1]
 
 
 # Diffusion
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem diffusion  --weights [100 , 1] --network [3, 50, 50, 50, 3] 
+python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem diffusion  --weights [10.0, 10.0, 1.0] --network [3, 50, 50, 50, 1]
 ```
 
 ## Notebooks for Plots
