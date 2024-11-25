@@ -92,7 +92,7 @@ Plot convergence analysis
 
 ## Citation
 
-If you find this work useful, we kindly ask that you consider citing it:
+If you find this work useful, we would appreciate it if you could consider citing it:
 
 ```bibtex
 @article{fareaa2024learnable,
