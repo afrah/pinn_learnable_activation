@@ -1,6 +1,6 @@
 # About
 
-This is the repository of the paper "Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations." The full paper is available on arXiv: [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111).
+This is the repository of the paper [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111) available on arXiv.
 
 
 Project structure
