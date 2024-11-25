@@ -3,7 +3,7 @@
 This is the repository of the paper [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111) available on arXiv.
 
 
-Project structure
+## Project structure
 
 ```bash
 ├── checkpoint     /* Logs and checkpoints, not committed to git */
@@ -86,9 +86,8 @@ Plot convergence analysis
 - Helmholtz convergence analysis: `helmholtz_spectral_analysis.ipynb`
   Helmholtz
 - Klein_gordon convergence analysis: `klein_gordon_spectral_analysis.ipynb`
-
-
 - Wave convergence analysis: `wave_spectral_analysis.ipynb`
+- Diffusion convergence analysis: `diffusion_spectral_analysis.ipynb`
 
 ## Citation
 
@@ -102,4 +101,3 @@ If you find this work useful, we would appreciate it if you could consider citin
   year={2024}
 }
 
-- Diffusion convergence analysis: `diffusion_spectral_analysis.ipynb`
