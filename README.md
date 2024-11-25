@@ -97,7 +97,7 @@ If you find this work useful, we would appreciate it if you could consider citin
 ```bibtex
 @article{fareaa2024learnable,
   title={Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations},
-  author={Afrah Fareaa and Mustafa Serdar Celebi},
+  author={Afrah Farea and Mustafa Serdar Celebi},
   journal={arXiv preprint arXiv:2411.15111},
   year={2024}
 }
