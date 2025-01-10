@@ -126,31 +126,6 @@ def draw_contourf_regular_2D(
             axes_pad=axes_pad,
         )
 
-    # #########################################    #########################################    #########################################
-    # ani = FuncAnimation(
-    #     fig,
-    #     update_contourf_regular,
-    #     frames=len(tf),
-    #     fargs=(
-    #         [xf] * np.prod(nrows_ncols),
-    #         [yf] * np.prod(nrows_ncols),
-    #         data,
-    #         [ax for ax in grid],
-    #         pcfsets,
-    #         kwargs,
-    #     ),
-    #     interval=50,
-    #     # blit=False,
-    #     # repeat=False,
-    #     # save_count=sys.maxsize,
-    # )
-
-    # ani.save(os.path.join(model_dirname, "result.gif"))
-    # plt.close(
-    #     "all",
-    # )
-
-
 ###############################################################################################
 def grid_contour_plots_regular(
     data,
@@ -236,83 +211,6 @@ def grid_contour_plots_regular(
     )
     return fig, grid, pcfsets, kwargs_list
 
-
-def plot_time_profile_regular_data_IBM(dirname, steps, txy, exact, pred, part, N=30):
-
-    [tstep, xstep, ystep] = steps
-    [x, y, t] = txy
-
-    minVal = min(exact.min(), pred.min())
-    maxVal = max(exact.max(), pred.max())
-
-    # print(minVal , maxVal)
-
-    x = x.reshape(tstep, xstep, ystep)[0, :, 0]
-    y = y.reshape(tstep, xstep, ystep)[0, 0, :]
-    t = t.reshape(tstep, xstep, ystep)[:, 0, 0]
-
-    # print(x , y , t)
-
-    exact = exact.reshape(tstep, xstep, ystep)
-    pred = pred.reshape(tstep, xstep, ystep)
-
-    timeStp = [10, 50, 99]
-    yStep = [0, 50, 99]
-    idx_x = np.random.choice(x.shape[0], N, replace=False)
-    x0 = x[idx_x]
-    ####### Row 1: h(t,x) slices ##################
-    gs1 = gridspec.GridSpec(3, 3)
-    gs1.update(top=0.85, bottom=0.25, left=0.05, right=0.95, wspace=0.45, hspace=0.9)
-
-    text = ["Data", "Exact", "Precition"]
-    color = ["rx", "r--", "b-"]
-    for i in range(len(yStep)):
-        for j in range(len(timeStp)):
-            ax = plt.subplot(gs1[i, j])
-            ax.plot(
-                x,
-                exact[:, yStep[i], :][timeStp[j], :],
-                color="#A9A9A9",
-                linewidth=3,
-                alpha=0.5,
-                label="Exact",
-            )
-            ax.plot(
-                x,
-                pred[:, yStep[i], :][timeStp[j], :],
-                color="#007FFF",
-                linestyle="--",
-                dashes=(3, 3),  # Equal length of dashes and gaps
-                dash_capstyle="butt",  # Optional: change the cap style of dashes
-                linewidth=1,
-                label="Prediction",
-            )
-
-            ax.set_ylabel(part)
-            ax.set_title(
-                "$t = %.2f$ , y =  %.2f" % (t[timeStp[j]], y[yStep[i]]), fontsize=10
-            )
-            ax.set_xlim([x.min() - 0.1, x.max() + 0.1])
-            ax.set_ylim([minVal, maxVal])
-            if i == 2:
-                ax.set_xlabel("$x$")
-                if j == 1:
-                    ax.legend(
-                        loc="upper center",
-                        bbox_to_anchor=(0.5, -0.7),
-                        ncol=2,
-                        frameon=False,
-                    )
-
-    # plt.tight_layout()
-    plt.savefig(
-        os.path.join(dirname, "time_profile_" + part + ".png"),
-        dpi=300,
-        bbox_inches="tight",
-    )
-    plt.close(
-        "all",
-    )
 
 
 ###################################################
