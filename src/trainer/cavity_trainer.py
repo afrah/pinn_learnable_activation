@@ -78,10 +78,10 @@ class Trainer(BaseTrainer):
             #     power_iteration(self.fluid_model, loss_initial)
             # )
 
-            self.trace_jacobian_bc_log.append(compute_ntk(self.fluid_model, loss_bc))
-            self.trace_jacobian_res_log.append(compute_ntk(self.fluid_model, loss_res))
+            self.trace_jacobian_bc_log.append(compute_ntk(self.fluid_model, loss_bc).item())
+            self.trace_jacobian_res_log.append(compute_ntk(self.fluid_model, loss_res).item())
             self.trace_jacobian_ic_log.append(
-                compute_ntk(self.fluid_model, loss_initial)
+                compute_ntk(self.fluid_model, loss_initial).item()
             )
             self.track_training(
                 int(epoch / self.config.get("print_every")),
