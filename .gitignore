@@ -141,4 +141,8 @@ output/
 
 copy_models.ipynb
 # *.pth
+
+checkpoints/
+testing_checkpoints/
+
  
