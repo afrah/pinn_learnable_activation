@@ -1,3 +1,12 @@
 {
-    "jupyter.notebookFileRoot": "${workspaceFolder}"
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
 }
