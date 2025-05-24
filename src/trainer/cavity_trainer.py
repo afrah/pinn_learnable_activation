@@ -68,15 +68,15 @@ class Trainer(BaseTrainer):
 
         # Print
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
-            # self.max_eig_hessian_bc_log.append(
-            #     power_iteration(self.fluid_model, loss_bc)
-            # )
-            # self.max_eig_hessian_res_log.append(
-            #     power_iteration(self.fluid_model, loss_res)
-            # )
-            # self.max_eig_hessian_ic_log.append(
-            #     power_iteration(self.fluid_model, loss_initial)
-            # )
+            self.max_eig_hessian_bc_log.append(
+                power_iteration(self.fluid_model, loss_bc)
+            )
+            self.max_eig_hessian_res_log.append(
+                power_iteration(self.fluid_model, loss_res)
+            )
+            self.max_eig_hessian_ic_log.append(
+                power_iteration(self.fluid_model, loss_initial)
+            )
 
             self.trace_jacobian_bc_log.append(compute_ntk(self.fluid_model, loss_bc).item())
             self.trace_jacobian_res_log.append(compute_ntk(self.fluid_model, loss_res).item())
