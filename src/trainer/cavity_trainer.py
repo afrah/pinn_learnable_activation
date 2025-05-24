@@ -3,13 +3,13 @@ import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import random
 
 
 from src.nn.loss import MSE
 from src.nn.pde import navier_stokes_2D_operator
 from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
+from src.utils.trace_jacobian import compute_ntk
 
 
 def get_random_minibatch(dataset_length, batch_size):
@@ -37,7 +37,6 @@ class Trainer(BaseTrainer):
         self.batch_size = config.get("batch_size")
 
     def _run_epoch(self, epoch):
-
         if self.rank == 0:
             start_time = time.time()
 
@@ -69,15 +68,20 @@ class Trainer(BaseTrainer):
 
         # Print
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
+            # self.max_eig_hessian_ic_log.append(
+            #     power_iteration(self.fluid_model, loss_initial)
+            # )
 
-            self.max_eig_hessian_bc_log.append(
-                power_iteration(self.fluid_model, loss_bc)
-            )
-            self.max_eig_hessian_res_log.append(
-                power_iteration(self.fluid_model, loss_res)
-            )
-            self.max_eig_hessian_ic_log.append(
-                power_iteration(self.fluid_model, loss_initial)
+            self.trace_jacobian_bc_log.append(compute_ntk(self.fluid_model, loss_bc))
+            self.trace_jacobian_res_log.append(compute_ntk(self.fluid_model, loss_res))
+            self.trace_jacobian_ic_log.append(
+                compute_ntk(self.fluid_model, loss_initial)
             )
             self.track_training(
                 int(epoch / self.config.get("print_every")),
@@ -88,8 +92,6 @@ class Trainer(BaseTrainer):
         self.optimizer.step()
 
     def _compute_losses(self):
-
-        # Access the randomly selected minibatch for each tensor
         batch_indices = get_random_minibatch(
             self.train_dataloader[0]["txy_domain"].shape[0], self.batch_size
         )
@@ -160,16 +162,6 @@ class Trainer(BaseTrainer):
             MSE(pred_bottom[:, 1], uvp_bottom[:, 1])
         )
 
-        pred_sensors = self.fluid_model(
-            txy_sensors,
-        )
-        lsensors = (
-            MSE(pred_sensors[:, 0], uvp_sensors[:, 0])
-            + MSE(pred_sensors[:, 1], uvp_sensors[:, 1])
-            + MSE(
-                pred_sensors[:, 2], uvp_sensors[:, 2]
-            )  # adding presssure is essential
-        )
         pred_up = self.fluid_model(
             txy_up,
         )
@@ -201,6 +193,6 @@ class Trainer(BaseTrainer):
             "lright": lright,
             "lbottom": lbottom,
             "lup": lup,
-            "linitial": linitial,
+            "linitial": linitial + lsensors,
             "lphy": lphy,
         }

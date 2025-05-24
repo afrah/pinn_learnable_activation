@@ -1,5 +1,4 @@
 def print_losses(model, epoch, elapsed):
-
     tloss = sum(model.epoch_loss[loss].item() for loss in model.config["loss_list"])
 
     model.running_time += elapsed
@@ -21,6 +20,18 @@ def print_losses(model, epoch, elapsed):
     if model.max_eig_hessian_res_log:
         additional_message += (
             f"max_eigH_res: {model.max_eig_hessian_res_log[-1]:.3e} | "
+        )
+    if model.trace_jacobian_bc_log:
+        additional_message += (
+            f"trace_jacobian_bc: {model.trace_jacobian_bc_log[-1]:.3e} | "
+        )
+    if model.trace_jacobian_ic_log:
+        additional_message += (
+            f"trace_jacobian_ic: {model.trace_jacobian_ic_log[-1]:.3e} | "
+        )
+    if model.trace_jacobian_res_log:
+        additional_message += (
+            f"trace_jacobian_res: {model.trace_jacobian_res_log[-1]:.3e} | "
         )
 
     final_message = additional_message + message

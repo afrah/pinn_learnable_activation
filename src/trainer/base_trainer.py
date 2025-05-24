@@ -31,6 +31,10 @@ class BaseTrainer:
         self.max_eig_hessian_ic_log = []
         self.max_eig_hessian_res_log = []
 
+        self.trace_jacobian_bc_log = []
+        self.trace_jacobian_ic_log = []
+        self.trace_jacobian_res_log = []
+
         self.epoch_loss = {
             loss: torch.tensor(0.0, requires_grad=True).to(self.rank)
             for loss in self.config["loss_list"]
@@ -60,7 +64,6 @@ class BaseTrainer:
             self.loss_history[key].append(self.epoch_loss[key].item())
 
     def train_mini_batch(self):
-
         for epoch in range(self.config.get("total_epochs") + 1):
             self._run_epoch(epoch)
             if self.rank == 0 and epoch % self.config["save_every"] == 0:
@@ -79,6 +82,9 @@ class BaseTrainer:
             "max_eig_hessian_bc_log": self.max_eig_hessian_bc_log,
             "max_eig_hessian_ic_log": self.max_eig_hessian_ic_log,
             "max_eig_hessian_res_log": self.max_eig_hessian_res_log,
+            "trace_jacobian_bc_log": self.trace_jacobian_bc_log,
+            "trace_jacobian_ic_log": self.trace_jacobian_ic_log,
+            "trace_jacobian_res_log": self.trace_jacobian_res_log,
             "epoch": epoch,
             "config": self.config,
             "model_path": model_path,
@@ -104,7 +110,6 @@ class BaseTrainer:
         )
 
     def track_training(self, epoch, elapsed_time):
-        # Logger tracking
         printing.print_losses(self, epoch, elapsed_time)
 
         # # Tensorboard tracking
@@ -113,10 +118,10 @@ class BaseTrainer:
         #     self._tb_log_histograms(epoch)
 
     def _run_epoch(self, epoch):
-        pass  # Implement in derived classes
+        pass
 
     def _compute_losses(self):
-        pass  # Implement in derived classes
+        pass
 
     #
     # Tensorboard specific logging functions
@@ -153,7 +158,6 @@ class BaseTrainer:
                 self.writer.add_histogram(name, param.cpu().detach().numpy(), epoch)
 
     def _tb_log_scalars(self, epoch):
-
         dicLoss = {k: v for k, v in self.epoch_loss.items() if k != "lphy"}
         self.writer.add_scalars("lhistory", dicLoss, epoch)
         self.writer.add_scalars(

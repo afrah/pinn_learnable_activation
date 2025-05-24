@@ -6,7 +6,7 @@ import torch
 
 def ddp_setup():
     local_rank = 0  # int(os.environ["LOCAL_RANK"])
-    world_size = 4  # int(os.environ["WORLD_SIZE"])
+    world_size = 1  # int(os.environ["WORLD_SIZE"])
     cuda = torch.cuda.is_available()
     print(f"ddp_setup: {0=},{world_size=}, {cuda=}")
     torch.cuda.set_device(0)
@@ -182,7 +182,7 @@ if __name__ == "__main__":
             "cavity",
         ],
         required=True,
-        help="solver",
+        help="problem",
     )
 
     def parse_list(weights_str, data_type):
@@ -252,9 +252,9 @@ if __name__ == "__main__":
         "loss_list": loss_list,
         "log_path": args.log_path,
     }
-    assert len(configuration.get("weights")) == len(
-        configuration.get("loss_list")
-    ), "Length of 'weights' and 'loss_list' must be equal."
+    assert len(configuration.get("weights")) == len(configuration.get("loss_list")), (
+        "Length of 'weights' and 'loss_list' must be equal."
+    )
 
     main(configuration)
 
