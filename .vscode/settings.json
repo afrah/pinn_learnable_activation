@@ -8,5 +8,9 @@
     "python.testing.pytestArgs": [
         "tests"
     ],
+<<<<<<< HEAD
     "jupyter.notebookFileRoot": "${workspaceFolder}",
+=======
+    "jupyter.notebookFileRoot": "${workspaceFolder}"
+>>>>>>> f9371f756df343ebe60e00fe5746a445699af609
 }
