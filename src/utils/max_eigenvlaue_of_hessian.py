@@ -64,6 +64,6 @@ def get_Hv(loss, weights, v):
 
     vprod = torch.dot(loss_gradients_flat, v)
 
-    Hv = torch.autograd.grad(vprod, weights, retain_graph=True, allow_unused=True)
+    Hv = torch.autograd.grad(vprod, weights, create_graph=True, allow_unused=True)
 
     return Hv

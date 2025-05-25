@@ -1,7 +1,7 @@
-import torch.optim
 import torch.nn as nn
-import torch.nn.init as init
 import torch.nn.functional as F
+import torch.nn.init as init
+import torch.optim
 
 
 def xavier_initialization(layer):

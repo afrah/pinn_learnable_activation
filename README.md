@@ -40,26 +40,26 @@ To train models, run the following commands (e.g.).
 
 ```bash
 # Cavity
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver bspline  --problem cavity --weights [2 , 2 , 2 , 2 , 4 , 0.1] --network [3, 50, 50, 50, 3] --dataset_path ./data/cavity.mat
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver bspline  --problem cavity --weights "[2 , 2 , 2 , 2 , 4 , 0.1]" --network "[3, 50, 50, 50, 3]" --dataset_path ./data/cavity.mat
 
 # Wave
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem wave - --weights [100.0, 100.0, 1.0] --network [2, 10, 30, 10, 1]
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem wave --weights "[100.0, 100.0, 1.0]" --network "[2, 300, 300, 300, 300, 1]"
 
 # Helmholtz
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh  --problem helmholtz --weights [10.0, 1.0] --network  [2, 30, 30, 30, 1]
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh  --problem helmholtz --weights "[10.0, 1.0]" --network "[2, 30, 30, 30, 1]"
 
 # Klein_gordon
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem klein_gordon  --weights  [50.0, 50.0, 1.0]--network [2, 30, 30, 30, 1]
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem klein_gordon  --weights  "[50.0, 50.0, 1.0]" --network "[2, 30, 30, 30, 1]"
 
 
 # Diffusion
 
-python -m trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem diffusion  --weights [10.0, 10.0, 1.0] --network [3, 50, 50, 50, 1]
-```
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem diffusion  --weights "[10.0, 10.0, 1.0]" --network "[3, 300, 300, 300, 1]"
 
+```
 ## Notebooks for Plots
 
 We provided all pre-trained models and training loss log history. The notebooks can be run independently of training models.

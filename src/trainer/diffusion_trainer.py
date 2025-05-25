@@ -1,11 +1,13 @@
 import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from src.trainer.base_trainer import BaseTrainer
 from src.nn.pde import diffusion_operator
+from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
+from src.utils.trace_jacobian import compute_ntk
 
 ## End: Importing local packages
 
@@ -57,17 +59,25 @@ class Trainer(BaseTrainer):
 
         ### printing
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
+            # self.max_eig_hessian_ic_log.append(
+            #     power_iteration(self.fluid_model, loss_initial)
+            # )
 
-            self.max_eig_hessian_bc_log.append(
-                power_iteration(self.fluid_model, loss_bc)
+            self.trace_jacobian_bc_log.append(
+                compute_ntk(self.fluid_model, loss_bc).item()
             )
-            self.max_eig_hessian_res_log.append(
-                power_iteration(self.fluid_model, loss_res)
+            self.trace_jacobian_res_log.append(
+                compute_ntk(self.fluid_model, loss_res).item()
             )
-            self.max_eig_hessian_ic_log.append(
-                power_iteration(self.fluid_model, loss_initial)
+            self.trace_jacobian_ic_log.append(
+                compute_ntk(self.fluid_model, loss_initial).item()
             )
-
             self.track_training(
                 int(epoch / self.config.get("print_every")),
                 elapsed_time,
@@ -81,7 +91,6 @@ class Trainer(BaseTrainer):
         return X, Y  # shape (2,1) and (1,1)
 
     def _compute_losses(self):
-
         X_ics_batch, u_ics_batch = self.fetch_minibatch(
             self.ics_sampler, self.batch_size
         )

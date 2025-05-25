@@ -1,9 +1,9 @@
 import random
 import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
 
 from src.nn.loss import MSE
 from src.nn.pde import navier_stokes_2D_operator
@@ -68,18 +68,22 @@ class Trainer(BaseTrainer):
 
         # Print
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
-            self.max_eig_hessian_bc_log.append(
-                power_iteration(self.fluid_model, loss_bc)
-            )
-            self.max_eig_hessian_res_log.append(
-                power_iteration(self.fluid_model, loss_res)
-            )
-            self.max_eig_hessian_ic_log.append(
-                power_iteration(self.fluid_model, loss_initial)
-            )
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
+            # self.max_eig_hessian_ic_log.append(
+            #     power_iteration(self.fluid_model, loss_initial)
+            # )
 
-            self.trace_jacobian_bc_log.append(compute_ntk(self.fluid_model, loss_bc).item())
-            self.trace_jacobian_res_log.append(compute_ntk(self.fluid_model, loss_res).item())
+            self.trace_jacobian_bc_log.append(
+                compute_ntk(self.fluid_model, loss_bc).item()
+            )
+            self.trace_jacobian_res_log.append(
+                compute_ntk(self.fluid_model, loss_res).item()
+            )
             self.trace_jacobian_ic_log.append(
                 compute_ntk(self.fluid_model, loss_initial).item()
             )
@@ -88,7 +92,7 @@ class Trainer(BaseTrainer):
                 elapsed_time,
             )
 
-        total_loss.backward(retain_graph=True)
+        total_loss.backward()
         self.optimizer.step()
 
     def _compute_losses(self):

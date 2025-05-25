@@ -1,17 +1,14 @@
-import os
 import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import sys
-
 
 from src.nn.loss import MSE
-from src.trainer.base_trainer import BaseTrainer
 from src.nn.pde import wave_operator
+from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
-
-## End: Importing local packages
+from src.utils.trace_jacobian import compute_ntk
 
 
 class Trainer(BaseTrainer):
@@ -34,7 +31,6 @@ class Trainer(BaseTrainer):
         self.bcs_sampler = train_dataloader[1]
         self.res_sampler = train_dataloader[2]
         self.batch_size = config.get("batch_size")
-        # Normalization constants
 
     def _run_epoch(self, epoch):
         # self.train_dataloader.sampler.set_epoch(epoch)
@@ -64,17 +60,25 @@ class Trainer(BaseTrainer):
 
         self.optimizer.zero_grad()
 
-        ### printing
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
+            # self.max_eig_hessian_ic_log.append(
+            #     power_iteration(self.fluid_model, loss_initial)
+            # )
 
-            self.max_eig_hessian_bc_log.append(
-                power_iteration(self.fluid_model, loss_bc)
+            self.trace_jacobian_bc_log.append(
+                compute_ntk(self.fluid_model, loss_bc).item()
             )
-            self.max_eig_hessian_res_log.append(
-                power_iteration(self.fluid_model, loss_res)
+            self.trace_jacobian_res_log.append(
+                compute_ntk(self.fluid_model, loss_res).item()
             )
-            self.max_eig_hessian_ic_log.append(
-                power_iteration(self.fluid_model, loss_initial)
+            self.trace_jacobian_ic_log.append(
+                compute_ntk(self.fluid_model, loss_initial).item()
             )
 
             self.track_training(
@@ -83,17 +87,13 @@ class Trainer(BaseTrainer):
             )
         total_loss.backward()
 
-        #### update schedular and optimizer
-
         self.optimizer.step()
 
-    # Feed minibatch
     def fetch_minibatch(self, sampler, N):
         X, Y = sampler.sample(N)
         return X, Y
 
     def _compute_losses(self):
-
         X_ics_batch, u_ics_batch = self.fetch_minibatch(
             self.ics_sampler, self.batch_size
         )
@@ -104,10 +104,7 @@ class Trainer(BaseTrainer):
             self.bcs_sampler[1], self.batch_size
         )
 
-        # Fetch residual mini-batch
         X_res_batch, _ = self.fetch_minibatch(self.res_sampler, self.batch_size)
-
-        # Evaluate predictions
 
         u_bc1_pred = self.fluid_model.forward(X_bc1_batch)
 
@@ -124,12 +121,13 @@ class Trainer(BaseTrainer):
         #     create_graph=True,
         # )[0]
 
-        t_r, x_r = X_res_batch[:, 0:1], X_res_batch[:, 1:2]
+        t_r = X_res_batch[:, 0:1]
+        x_r = X_res_batch[:, 1:2]
         [_, residual] = wave_operator(self.fluid_model, t_r, x_r)
 
-        # Total loss
+        phys_loss = torch.mean(residual**2)
         return {
             "lbcs": (MSE(u_bc1_pred, u_bc1_batch) + MSE(u_bc2_pred, u_bc2_batch)),
             "linitial": (MSE(u_ics_pred, u_ics_batch)),
-            "lphy": MSE(residual, torch.zeros_like(residual)),
+            "lphy": phys_loss,
         }

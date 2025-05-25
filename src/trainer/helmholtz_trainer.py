@@ -1,12 +1,13 @@
 import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-
-from src.trainer.base_trainer import BaseTrainer
 from src.nn.pde import helmholtz_operator
+from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
+from src.utils.trace_jacobian import compute_ntk
 
 ## End: Importing local packages
 
@@ -59,13 +60,20 @@ class Trainer(BaseTrainer):
         self.optimizer.zero_grad()
 
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
 
-            self.max_eig_hessian_bc_log.append(
-                power_iteration(self.fluid_model, loss_bc)
+            self.trace_jacobian_bc_log.append(
+                compute_ntk(self.fluid_model, loss_bc).item()
             )
-            self.max_eig_hessian_res_log.append(
-                power_iteration(self.fluid_model, loss_res)
+            self.trace_jacobian_res_log.append(
+                compute_ntk(self.fluid_model, loss_res).item()
             )
+
             self.track_training(
                 int(epoch / self.config.get("print_every")), elapsed_time
             )
@@ -79,7 +87,6 @@ class Trainer(BaseTrainer):
         return X, Y  # shape (2,1) and (1,1)
 
     def _compute_losses(self):
-
         # Fetch boundary mini-batches
         X_bc1_batch, u_bc1_batch = self.fetch_minibatch(
             self.bcs_sampler[0], self.batch_size

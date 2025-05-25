@@ -1,9 +1,9 @@
 import re
+
 import torch
 
 
 def navier_stokes_2D_operator(model, t, x, y, min_x=0, max_x=1):
-
     mu = 0.00345
     DENSITY = 1056.0
 
@@ -77,7 +77,6 @@ def helmholtz_operator(
 
 # Operator to compute residuals
 def klein_gordon_operator(fluid_model, t, x, x_min=0.0, x_max=1.0):
-
     # Parameters of equations
     alpha = -1.0
     beta = 0.0
@@ -99,7 +98,6 @@ def klein_gordon_operator(fluid_model, t, x, x_min=0.0, x_max=1.0):
 
 # Operator to compute residuals
 def wave_operator(model, t, x, sigma_t=1.0, sigma_x=1.0):
-
     c = 2
     t.requires_grad = True
     x.requires_grad = True
@@ -118,7 +116,6 @@ def wave_operator(model, t, x, sigma_t=1.0, sigma_x=1.0):
 def diffusion_operator(
     model, t, x, y, sigma_t=1.0, sigma_x=1.0, sigma_y=1.0, D=0.01, v_x=1.0, v_y=1.0
 ):
-
     # Enable gradient tracking
     t.requires_grad = True
     x.requires_grad = True

@@ -1,13 +1,13 @@
 import os
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-# from torch.utils.tensorboard import SummaryWriter
-
-
-from src.utils.logger import Logging
 from src.utils import printing
+
+# from torch.utils.tensorboard import SummaryWriter
+from src.utils.logger import Logging
 
 
 class BaseTrainer:
@@ -83,8 +83,8 @@ class BaseTrainer:
             "max_eig_hessian_ic_log": self.max_eig_hessian_ic_log,
             "max_eig_hessian_res_log": self.max_eig_hessian_res_log,
             "trace_jacobian_bc_log": self.trace_jacobian_bc_log,
-            "trace_jacobian_ic_log": self.trace_jacobian_ic_log,
             "trace_jacobian_res_log": self.trace_jacobian_res_log,
+            "trace_jacobian_ic_log": self.trace_jacobian_ic_log,
             "epoch": epoch,
             "config": self.config,
             "model_path": model_path,
