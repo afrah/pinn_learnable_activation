@@ -1,17 +1,4 @@
-# Copyright 2024 Li, Ziyao
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+# code is modified from https://github.com/ZiyaoLi/fast-kan
 
 import math
 from typing import *
@@ -159,65 +146,7 @@ class FastKAN(nn.Module):
         return x
 
 
-class AttentionWithFastKANTransform(nn.Module):
-    def __init__(
-        self,
-        q_dim: int,
-        k_dim: int,
-        v_dim: int,
-        head_dim: int,
-        num_heads: int,
-        gating: bool = True,
-    ):
-        super(AttentionWithFastKANTransform, self).__init__()
 
-        self.num_heads = num_heads
-        total_dim = head_dim * self.num_heads
-        self.gating = gating
-        self.linear_q = FastKANLayer(q_dim, total_dim)
-        self.linear_k = FastKANLayer(k_dim, total_dim)
-        self.linear_v = FastKANLayer(v_dim, total_dim)
-        self.linear_o = FastKANLayer(total_dim, q_dim)
-        self.linear_g = None
-        if self.gating:
-            self.linear_g = FastKANLayer(q_dim, total_dim)
-        # precompute the 1/sqrt(head_dim)
-        self.norm = head_dim**-0.5
-
-    def forward(
-        self,
-        q: torch.Tensor,
-        k: torch.Tensor,
-        v: torch.Tensor,
-        bias: torch.Tensor = None,  # additive attention bias
-    ) -> torch.Tensor:
-        wq = (
-            self.linear_q(q).view(*q.shape[:-1], 1, self.num_heads, -1) * self.norm
-        )  # *q1hc
-        wk = self.linear_k(k).view(
-            *k.shape[:-2], 1, k.shape[-2], self.num_heads, -1
-        )  # *1khc
-        att = (wq * wk).sum(-1).softmax(-2)  # *qkh
-        del wq, wk
-        if bias is not None:
-            att = att + bias[..., None]
-
-        wv = self.linear_v(v).view(
-            *v.shape[:-2], 1, v.shape[-2], self.num_heads, -1
-        )  # *1khc
-        o = (att[..., None] * wv).sum(-3)  # *qhc
-        del att, wv
-
-        o = o.view(*o.shape[:-2], -1)  # *q(hc)
-
-        if self.linear_g is not None:
-            # gating, use raw query input
-            g = self.linear_g(q)
-            o = torch.sigmoid(g) * o
-
-        # merge heads
-        o = self.linear_o(o)
-        return o
 
 
 class PINNKAN(nn.Module):
