@@ -1,5 +1,5 @@
-from functools import partial
 import sys
+from functools import partial
 
 import torch
 
@@ -75,7 +75,7 @@ def main(config):
         config (_type_): _description_
     """
 
-    local_rank, world_size = ddp_setup()
+    local_rank, world_size = "cpu", 1  # ddp_setup()
     train_dataloader, model, optimizer = init_model_and_data(config, local_rank)
 
     if config.get("problem") == "cavity":
@@ -132,7 +132,11 @@ def main(config):
         )
 
     if local_rank == 0:
-        print(f"DATA_FILE: {config.get('dataset_path')=}")
+        print("Configuration:")
+        for key, value in config.items():
+            print(f"{key}: {value}")
+        total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print(f"Total number of trainable parameters in the model: {total_params}")
     trainer.train_mini_batch()
 
 

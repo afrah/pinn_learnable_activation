@@ -39,6 +39,7 @@ class Trainer(BaseTrainer):
 
     def _run_epoch(self, epoch):
         # self.train_dataloader.sampler.set_epoch(epoch)
+        self.optimizer.zero_grad()
 
         if self.rank == 0:
             start_time = time.time()
@@ -56,8 +57,6 @@ class Trainer(BaseTrainer):
 
         if self.rank == 0:
             elapsed_time = time.time() - start_time
-
-        self.optimizer.zero_grad()
 
         if self.rank == 0 and epoch % self.config.get("print_every") == 0:
             # self.max_eig_hessian_bc_log.append(
@@ -77,7 +76,7 @@ class Trainer(BaseTrainer):
             self.track_training(
                 int(epoch / self.config.get("print_every")), elapsed_time
             )
-        total_loss.backward(retain_graph=True)
+        total_loss.backward()
 
         self.optimizer.step()
 

@@ -40,7 +40,7 @@ class BaseTrainer:
             for loss in self.config["loss_list"]
         }
 
-        if self.rank == 0:
+        if self.rank == 0 or self.rank == "cpu":
             self._initialize_logging()
 
             # Uncomment the following line to use Tensorboard
@@ -56,7 +56,7 @@ class BaseTrainer:
         with torch.no_grad():
             for loss_type in self.config["loss_list"]:
                 self.epoch_loss[loss_type] = losses.get(loss_type)
-            if self.rank == 0:
+            if self.rank == 0 or self.rank == "cpu":
                 self.update_loss_history()
 
     def update_loss_history(self):
@@ -66,7 +66,11 @@ class BaseTrainer:
     def train_mini_batch(self):
         for epoch in range(self.config.get("total_epochs") + 1):
             self._run_epoch(epoch)
-            if self.rank == 0 and epoch % self.config["save_every"] == 0:
+            if (
+                self.rank == 0
+                or self.rank == "cpu"
+                and epoch % self.config["save_every"] == 0
+            ):
                 self._save_checkpoint(epoch)
 
         self._save_checkpoint(self.config.get("total_epochs") + 1)
@@ -120,7 +124,7 @@ class BaseTrainer:
     def _run_epoch(self, epoch):
         pass
 
-    def _compute_losses(self):
+    def _compute_losses(self, epoch):
         pass
 
     #

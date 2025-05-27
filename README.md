@@ -40,7 +40,7 @@ To train models, run the following commands (e.g.).
 
 ```bash
 # Cavity
-python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver bspline  --problem cavity --weights "[2 , 2 , 2 , 2 , 4 , 0.1]" --network "[3, 50, 50, 50, 3]" --dataset_path ./data/cavity.mat
+python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh  --problem cavity --weights "[2 , 2 , 2 , 2 , 4 , 0.1]" --network "[3, 300, 300, 300, 3]" --dataset_path ./data/cavity.mat
 
 # Wave
 

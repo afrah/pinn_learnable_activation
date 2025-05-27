@@ -80,7 +80,7 @@ class Trainer(BaseTrainer):
                 int(epoch / self.config.get("print_every")),
                 elapsed_time,
             )
-        total_loss.backward(retain_graph=True)
+        total_loss.backward()
 
         self.optimizer.step()
 

@@ -37,10 +37,11 @@ class Trainer(BaseTrainer):
         self.batch_size = config.get("batch_size")
 
     def _run_epoch(self, epoch):
-        if self.rank == 0:
+        if self.rank == 0 or self.rank == "cpu":
             start_time = time.time()
+        self.optimizer.zero_grad()
 
-        bclosses = self._compute_losses()
+        bclosses = self._compute_losses(epoch)
         self.update_epoch_loss(bclosses)
 
         loss_bc = (
@@ -61,13 +62,15 @@ class Trainer(BaseTrainer):
             + self.config.get("weights")[5] * bclosses["lphy"]
         )
 
-        if self.rank == 0:
+        if self.rank == 0 or self.rank == "cpu":
             elapsed_time = time.time() - start_time
 
-        self.optimizer.zero_grad()
-
         # Print
-        if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+        if (
+            self.rank == 0
+            or self.rank == "cpu"
+            and epoch % self.config.get("print_every") == 0
+        ):
             # self.max_eig_hessian_bc_log.append(
             #     power_iteration(self.fluid_model, loss_bc)
             # )
@@ -78,15 +81,15 @@ class Trainer(BaseTrainer):
             #     power_iteration(self.fluid_model, loss_initial)
             # )
 
-            self.trace_jacobian_bc_log.append(
-                compute_ntk(self.fluid_model, loss_bc).item()
-            )
-            self.trace_jacobian_res_log.append(
-                compute_ntk(self.fluid_model, loss_res).item()
-            )
-            self.trace_jacobian_ic_log.append(
-                compute_ntk(self.fluid_model, loss_initial).item()
-            )
+            # self.trace_jacobian_bc_log.append(
+            #     compute_ntk(self.fluid_model, loss_bc).item()
+            # )
+            # self.trace_jacobian_res_log.append(
+            #     compute_ntk(self.fluid_model, loss_res).item()
+            # )
+            # self.trace_jacobian_ic_log.append(
+            #     compute_ntk(self.fluid_model, loss_initial).item()
+            # )
             self.track_training(
                 int(epoch / self.config.get("print_every")),
                 elapsed_time,
@@ -95,7 +98,7 @@ class Trainer(BaseTrainer):
         total_loss.backward()
         self.optimizer.step()
 
-    def _compute_losses(self):
+    def _compute_losses(self, epoch):
         batch_indices = get_random_minibatch(
             self.train_dataloader[0]["txy_domain"].shape[0], self.batch_size
         )
@@ -192,6 +195,31 @@ class Trainer(BaseTrainer):
                 pred_sensors[:, 2], uvp_sensors[:, 2]
             )  # adding presssure is essential
         )
+
+        pred_bc = pred_right + pred_left + pred_bottom + pred_up
+        if (
+            self.rank == 0
+            or self.rank == "cpu"
+            and epoch % self.config.get("print_every") == 0
+        ):
+            # self.max_eig_hessian_bc_log.append(
+            #     power_iteration(self.fluid_model, loss_bc)
+            # )
+            # self.max_eig_hessian_res_log.append(
+            #     power_iteration(self.fluid_model, loss_res)
+            # )
+            # self.max_eig_hessian_ic_log.append(
+            #     power_iteration(self.fluid_model, loss_initial)
+            # )
+
+            ntk_bc = compute_ntk(self.fluid_model, pred_bc)
+            ntk_res = compute_ntk(self.fluid_model, continuity + f_u + f_v)
+            ntk_ic = compute_ntk(self.fluid_model, pred_initial + pred_sensors)
+
+            self.trace_jacobian_bc_log.append(ntk_bc.item())
+            self.trace_jacobian_res_log.append(ntk_res.item())
+            self.trace_jacobian_ic_log.append(ntk_ic.item())
+
         return {
             "lleft": lleft,
             "lright": lright,
