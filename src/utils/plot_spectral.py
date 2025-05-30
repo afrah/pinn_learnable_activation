@@ -1,9 +1,11 @@
+import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-import numpy as np
+
+from src.utils.plot_loss import smooth_loss
 
 
-def plot_spectral(ax, data_list, y_max=None, label=False):
+def plot_spectral(ax, data_list, index=1, y_max=None, label=False, smoothed_data=True):
     """
     Usage:
     plot_loss_history(data_list, save_path=None, y_max=None)
@@ -15,7 +17,16 @@ def plot_spectral(ax, data_list, y_max=None, label=False):
         color = entry["color"]
         name = entry["name"]
         alpha = entry["alpha"]
+        window = entry["window"] if "window" in entry else 2
+        polyorder = entry["polyorder"] if "polyorder" in entry else 1
+        show_avg = entry["show_avg"] if "show_avg" in entry else False
+        show_lower = entry["show_lower"] if "show_lower" in entry else False
+        # Apply smoothing and plot the smoothed data
+        smooth_alpha = 0.1
+        polyorder = 1
 
+        if smoothed_data:
+            data = smooth_loss(data, smooth_alpha, window, polyorder)
         # sns.scatterplot(
         #     x=np.arange(len(data)),
         #     y=data,
@@ -37,8 +48,9 @@ def plot_spectral(ax, data_list, y_max=None, label=False):
         )
 
     ax.set_yscale("log")
-    ax.set_xlabel(r"Epochs (x$10^3$) →", fontsize=15, color="grey")
-    ax.set_ylabel(r"$\lambda$ (log) →", fontsize=15, color="grey")
+    if index == 0:
+        ax.set_xlabel(r"Epochs (x$10^3$) →", fontsize=15, color="grey")
+        ax.set_ylabel(r"Decaying rate (log) →", fontsize=15, color="grey")
     ax.tick_params(axis="both", labelsize=14, colors="grey")
     ax.spines["top"].set_color("grey")
     ax.spines["bottom"].set_color("grey")

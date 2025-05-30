@@ -8,6 +8,7 @@ from src.utils import printing
 
 # from torch.utils.tensorboard import SummaryWriter
 from src.utils.logger import Logging
+from src.utils.ntk import compute_full_ntk_matrix
 
 
 class BaseTrainer:
@@ -40,7 +41,7 @@ class BaseTrainer:
             for loss in self.config["loss_list"]
         }
 
-        if self.rank == 0 or self.rank == "cpu":
+        if self.rank == 0:
             self._initialize_logging()
 
             # Uncomment the following line to use Tensorboard
@@ -56,7 +57,7 @@ class BaseTrainer:
         with torch.no_grad():
             for loss_type in self.config["loss_list"]:
                 self.epoch_loss[loss_type] = losses.get(loss_type)
-            if self.rank == 0 or self.rank == "cpu":
+            if self.rank == 0:
                 self.update_loss_history()
 
     def update_loss_history(self):
@@ -66,11 +67,7 @@ class BaseTrainer:
     def train_mini_batch(self):
         for epoch in range(self.config.get("total_epochs") + 1):
             self._run_epoch(epoch)
-            if (
-                self.rank == 0
-                or self.rank == "cpu"
-                and epoch % self.config["save_every"] == 0
-            ):
+            if self.rank == 0 and epoch % self.config["save_every"] == 0:
                 self._save_checkpoint(epoch)
 
         self._save_checkpoint(self.config.get("total_epochs") + 1)
@@ -169,3 +166,49 @@ class BaseTrainer:
             {"lphy": self.epoch_loss.get("lphy")},
             epoch,
         )
+
+    def _compute_full_ntk(self, model, inputs1, inputs2):
+        ntk = compute_full_ntk_matrix(model, inputs1, inputs2)
+
+        eigenvals, _ = torch.linalg.eigh(ntk)
+        eigenvals = torch.sort(eigenvals, descending=True)[0]
+        # eigenvals = eigenvals[eigenvals > 1e-12]
+        return eigenvals.cpu().detach().numpy()
+        # # print(f"Number of eigenvalues: {len(eigenvals)}")
+        # # print(f"Eigenvalues: {eigenvals}")
+        # if len(eigenvals) < 10:
+        #     print("Not enough eigenvalues for decay rate computation")
+        #     return 0.0
+
+        # # Use middle portion to avoid edge effects
+        # start_idx = 0  # min(5, len(eigenvals) // 4)
+        # end_idx = len(eigenvals)  # max(len(eigenvals) - 5, 3 * len(eigenvals) // 4)
+
+        # k_values = torch.arange(start_idx + 1, end_idx + 1, dtype=torch.float32)
+        # selected_eigenvals = eigenvals  # [start_idx:end_idx]
+
+        # if len(selected_eigenvals) < 5:
+        #     print("Not enough eigenvalues for decay rate computation")
+        #     return 0.0
+
+        # # Fit log(λ) = -α * log(k) + const
+        # log_k = torch.log(k_values)
+        # log_eigenvals = torch.log(selected_eigenvals + 1e-20)
+
+        # # Linear regression in log-log space
+        # A = (
+        #     torch.stack(
+        #         [log_k, torch.ones_like(log_k)],
+        #         dim=1,
+        #     )
+        #     .to(torch.float32)
+        #     .to(eigenvals.device)
+        # )
+
+        # try:
+        #     coeffs = torch.linalg.lstsq(A, log_eigenvals)[0]
+        #     decay_rate = -coeffs[0].item()
+        #     return max(0.0, decay_rate)  # Ensure non-negative
+        # except Exception as e:
+        #     print(e)
+        #     return 0.0

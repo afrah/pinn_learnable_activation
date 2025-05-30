@@ -24,8 +24,8 @@ def compute_jacobian(model, fx, create_graph=True):
         )
         grad_flat = torch.cat(
             [
-                # g.reshape(-1) if g is not None else torch.zeros_like(p.reshape(-1))
-                g.reshape(-1)
+                g.reshape(-1) if g is not None else torch.zeros_like(p.reshape(-1))
+                # g.reshape(-1)
                 for g, p in zip(grads, params)
             ]
         )

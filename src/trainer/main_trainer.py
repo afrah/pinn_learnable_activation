@@ -75,7 +75,7 @@ def main(config):
         config (_type_): _description_
     """
 
-    local_rank, world_size = "cpu", 1  # ddp_setup()
+    local_rank, world_size = ddp_setup()  # "cpu", 1  # ddp_setup()
     train_dataloader, model, optimizer = init_model_and_data(config, local_rank)
 
     if config.get("problem") == "cavity":

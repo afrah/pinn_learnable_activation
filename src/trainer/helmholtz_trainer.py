@@ -7,7 +7,7 @@ import torch.optim as optim
 from src.nn.pde import helmholtz_operator
 from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
-from src.utils.trace_jacobian import compute_ntk
+from src.utils.ntk import compute_full_ntk_matrix
 
 ## End: Importing local packages
 
@@ -44,7 +44,7 @@ class Trainer(BaseTrainer):
         if self.rank == 0:
             start_time = time.time()
 
-        bclosses = self._compute_losses()
+        bclosses = self._compute_losses(epoch)
         self.update_epoch_loss(bclosses)
 
         loss_bc = bclosses["lbcs"]
@@ -66,12 +66,12 @@ class Trainer(BaseTrainer):
             #     power_iteration(self.fluid_model, loss_res)
             # )
 
-            self.trace_jacobian_bc_log.append(
-                compute_ntk(self.fluid_model, loss_bc).item()
-            )
-            self.trace_jacobian_res_log.append(
-                compute_ntk(self.fluid_model, loss_res).item()
-            )
+            # self.trace_jacobian_bc_log.append(
+            #     compute_ntk(self.fluid_model, loss_bc).item()
+            # )
+            # self.trace_jacobian_res_log.append(
+            #     compute_ntk(self.fluid_model, loss_res).item()
+            # )
 
             self.track_training(
                 int(epoch / self.config.get("print_every")), elapsed_time
@@ -85,7 +85,7 @@ class Trainer(BaseTrainer):
         X, Y = sampler.sample(N)
         return X, Y  # shape (2,1) and (1,1)
 
-    def _compute_losses(self):
+    def _compute_losses(self, epoch):
         # Fetch boundary mini-batches
         X_bc1_batch, u_bc1_batch = self.fetch_minibatch(
             self.bcs_sampler[0], self.batch_size
@@ -127,7 +127,44 @@ class Trainer(BaseTrainer):
 
         loss_res = loss_fn(residual, f_res_batch)
 
+        if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            self._compute_decay_rate()
+
         return {
             "lbcs": loss_bc,
             "lphy": loss_res,
         }
+
+    def _compute_decay_rate(self) -> float:
+        """
+        MOST IMPORTANT: Polynomial decay rate α where λ_k ∝ k^(-α)
+        Higher α = stronger spectral bias
+        """
+        ntk_batch_size = 64
+        X_bc1_batch, _ = self.fetch_minibatch(self.bcs_sampler[0], ntk_batch_size // 2)
+        X_bc2_batch, _ = self.fetch_minibatch(self.bcs_sampler[1], ntk_batch_size // 2)
+        X_bc3_batch, _ = self.fetch_minibatch(self.bcs_sampler[2], ntk_batch_size // 2)
+        X_bc4_batch, _ = self.fetch_minibatch(self.bcs_sampler[3], ntk_batch_size // 2)
+
+        # Fetch residual mini-batch
+        X_res_batch1, _ = self.fetch_minibatch(self.res_sampler, ntk_batch_size)
+        X_res_batch2, _ = self.fetch_minibatch(self.res_sampler, ntk_batch_size)
+
+        ntk_bc1 = torch.cat((X_bc1_batch, X_bc2_batch, X_bc3_batch, X_bc4_batch), dim=0)
+
+        ntk_bc1 = ntk_bc1[torch.randperm(ntk_bc1.shape[0])[:ntk_batch_size]]
+
+        X_bc1_batch, _ = self.fetch_minibatch(self.bcs_sampler[0], ntk_batch_size // 2)
+        X_bc2_batch, _ = self.fetch_minibatch(self.bcs_sampler[1], ntk_batch_size // 2)
+        X_bc3_batch, _ = self.fetch_minibatch(self.bcs_sampler[2], ntk_batch_size // 2)
+        X_bc4_batch, _ = self.fetch_minibatch(self.bcs_sampler[3], ntk_batch_size // 2)
+
+        ntk_bc2 = torch.cat((X_bc1_batch, X_bc2_batch, X_bc3_batch, X_bc4_batch), dim=0)
+
+        ntk_bc2 = ntk_bc2[torch.randperm(ntk_bc2.shape[0])[:ntk_batch_size]]
+
+        ntk_bc = self._compute_full_ntk(self.fluid_model, ntk_bc1, ntk_bc2)
+        ntk_res = self._compute_full_ntk(self.fluid_model, X_res_batch1, X_res_batch2)
+
+        self.trace_jacobian_bc_log.append(ntk_bc)
+        self.trace_jacobian_res_log.append(ntk_res)

@@ -9,6 +9,7 @@ from src.nn.loss import MSE
 from src.nn.pde import navier_stokes_2D_operator
 from src.trainer.base_trainer import BaseTrainer
 from src.utils.max_eigenvlaue_of_hessian import power_iteration
+from src.utils.ntk import compute_full_ntk_matrix
 from src.utils.trace_jacobian import compute_ntk
 
 
@@ -37,7 +38,7 @@ class Trainer(BaseTrainer):
         self.batch_size = config.get("batch_size")
 
     def _run_epoch(self, epoch):
-        if self.rank == 0 or self.rank == "cpu":
+        if self.rank == 0:
             start_time = time.time()
         self.optimizer.zero_grad()
 
@@ -62,15 +63,11 @@ class Trainer(BaseTrainer):
             + self.config.get("weights")[5] * bclosses["lphy"]
         )
 
-        if self.rank == 0 or self.rank == "cpu":
+        if self.rank == 0:
             elapsed_time = time.time() - start_time
 
         # Print
-        if (
-            self.rank == 0
-            or self.rank == "cpu"
-            and epoch % self.config.get("print_every") == 0
-        ):
+        if self.rank == 0 and epoch % self.config.get("print_every") == 0:
             # self.max_eig_hessian_bc_log.append(
             #     power_iteration(self.fluid_model, loss_bc)
             # )
@@ -98,47 +95,41 @@ class Trainer(BaseTrainer):
         total_loss.backward()
         self.optimizer.step()
 
+    def _get_batch(self, str_txy, str_uvp=None, batch_size=128):
+        batch_indices = get_random_minibatch(
+            self.train_dataloader[0][str_txy].shape[0], batch_size
+        )
+        txy = self.train_dataloader[0][str_txy][batch_indices, :]
+        if str_uvp is None:
+            uvp = None
+        else:
+            uvp = self.train_dataloader[1][str_uvp][batch_indices, :]
+
+        return txy, uvp
+
     def _compute_losses(self, epoch):
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_domain"].shape[0], self.batch_size
+        txy_domain, uvp_domain = self._get_batch(
+            "txy_domain", "uvp_domain", self.batch_size
         )
-        txy_domain = self.train_dataloader[0]["txy_domain"][batch_indices, :]
+        txy_sensors, uvp_sensors = self._get_batch(
+            "txy_sensors", "uvp_sensors", self.batch_size
+        )
 
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_sensors"].shape[0], self.batch_size
-        )
-        txy_sensors = self.train_dataloader[0]["txy_sensors"][batch_indices, :]
-        uvp_sensors = self.train_dataloader[1]["uvp_sensors"][batch_indices, :]
+        txy_left, uvp_left = self._get_batch("txy_left", "uvp_left", self.batch_size)
 
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_left"].shape[0], self.batch_size
+        txy_right, uvp_right = self._get_batch(
+            "txy_right", "uvp_right", self.batch_size
         )
-        txy_left = self.train_dataloader[0]["txy_left"][batch_indices, :]
-        uvp_left = self.train_dataloader[1]["uvp_left"][batch_indices, :]
 
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_right"].shape[0], self.batch_size
+        txy_bottom, uvp_bottom = self._get_batch(
+            "txy_bottom", "uvp_bottom", self.batch_size
         )
-        txy_right = self.train_dataloader[0]["txy_right"][batch_indices, :]
-        uvp_right = self.train_dataloader[1]["uvp_right"][batch_indices, :]
 
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_bottom"].shape[0], self.batch_size
-        )
-        txy_bottom = self.train_dataloader[0]["txy_bottom"][batch_indices, :]
-        uvp_bottom = self.train_dataloader[1]["uvp_bottom"][batch_indices, :]
+        txy_up, uvp_up = self._get_batch("txy_up", "uvp_up", self.batch_size)
 
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_up"].shape[0], self.batch_size
+        txy_initial, uvp_initial = self._get_batch(
+            "txy_initial", "uvp_initial", self.batch_size
         )
-        txy_up = self.train_dataloader[0]["txy_up"][batch_indices, :]
-        uvp_up = self.train_dataloader[1]["uvp_up"][batch_indices, :]
-
-        batch_indices = get_random_minibatch(
-            self.train_dataloader[0]["txy_initial"].shape[0], self.batch_size
-        )
-        txy_initial = self.train_dataloader[0]["txy_initial"][batch_indices, :]
-        uvp_initial = self.train_dataloader[1]["uvp_initial"][batch_indices, :]
 
         t_r, x_r, y_r = txy_domain[:, 0:1], txy_domain[:, 1:2], txy_domain[:, 2:3]
 
@@ -196,30 +187,8 @@ class Trainer(BaseTrainer):
             )  # adding presssure is essential
         )
 
-        pred_bc = pred_right + pred_left + pred_bottom + pred_up
-        if (
-            self.rank == 0
-            or self.rank == "cpu"
-            and epoch % self.config.get("print_every") == 0
-        ):
-            # self.max_eig_hessian_bc_log.append(
-            #     power_iteration(self.fluid_model, loss_bc)
-            # )
-            # self.max_eig_hessian_res_log.append(
-            #     power_iteration(self.fluid_model, loss_res)
-            # )
-            # self.max_eig_hessian_ic_log.append(
-            #     power_iteration(self.fluid_model, loss_initial)
-            # )
-
-            ntk_bc = compute_ntk(self.fluid_model, pred_bc)
-            ntk_res = compute_ntk(self.fluid_model, continuity + f_u + f_v)
-            ntk_ic = compute_ntk(self.fluid_model, pred_initial + pred_sensors)
-
-            self.trace_jacobian_bc_log.append(ntk_bc.item())
-            self.trace_jacobian_res_log.append(ntk_res.item())
-            self.trace_jacobian_ic_log.append(ntk_ic.item())
-
+        if self.rank == 0 and epoch % self.config.get("print_every") == 0:
+            self._compute_decay_rate()
         return {
             "lleft": lleft,
             "lright": lright,
@@ -228,3 +197,107 @@ class Trainer(BaseTrainer):
             "linitial": linitial + lsensors,
             "lphy": lphy,
         }
+
+    # def _compute_ntk(self):
+    #     ntk_batch_size = 32
+    #     txy_ntk_domain1, _ = self._get_batch("txy_domain", batch_size=ntk_batch_size)
+    #     txy_ntk_left1, _ = self._get_batch("txy_left", batch_size=ntk_batch_size)
+    #     txy_ntk_right1, _ = self._get_batch("txy_right", batch_size=ntk_batch_size)
+    #     txy_ntk_bottom1, _ = self._get_batch("txy_bottom", batch_size=ntk_batch_size)
+    #     txy_ntk_up1, _ = self._get_batch("txy_up", batch_size=ntk_batch_size)
+    #     txy_ntk_initial1, _ = self._get_batch("txy_initial", batch_size=ntk_batch_size)
+    #     ntk_bc1 = torch.cat(
+    #         (txy_ntk_left1, txy_ntk_right1, txy_ntk_bottom1, txy_ntk_up1), dim=0
+    #     )
+
+    #     txy_ntk_domain2, _ = self._get_batch("txy_domain", batch_size=ntk_batch_size)
+    #     txy_ntk_left2, _ = self._get_batch("txy_left", batch_size=ntk_batch_size)
+    #     txy_ntk_right2, _ = self._get_batch("txy_right", batch_size=ntk_batch_size)
+    #     txy_ntk_bottom2, _ = self._get_batch("txy_bottom", batch_size=ntk_batch_size)
+    #     txy_ntk_up2, _ = self._get_batch("txy_up", batch_size=ntk_batch_size)
+    #     txy_ntk_initial2, _ = self._get_batch("txy_initial", batch_size=ntk_batch_size)
+    #     ntk_bc2 = torch.cat(
+    #         (txy_ntk_left2, txy_ntk_right2, txy_ntk_bottom2, txy_ntk_up2), dim=0
+    #     )
+
+    #     [ntk_continuity1, ntk_f_u1, ntk_f_v1] = navier_stokes_2D_operator(
+    #         self.fluid_model,
+    #         txy_ntk_domain1[:, 0:1],
+    #         txy_ntk_domain1[:, 1:2],
+    #         txy_ntk_domain1[:, 2:3],
+    #     )
+
+    #     [ntk_continuity2, ntk_f_u2, ntk_f_v2] = navier_stokes_2D_operator(
+    #         self.fluid_model,
+    #         txy_ntk_domain2[:, 0:1],
+    #         txy_ntk_domain2[:, 1:2],
+    #         txy_ntk_domain2[:, 2:3],
+    #     )
+
+    #     ntk_bc1_pred = self.fluid_model(ntk_bc1)
+    #     ntk_bc2_pred = self.fluid_model(ntk_bc2)
+    #     ntk_initial1_pred = self.fluid_model(txy_ntk_initial1)
+    #     ntk_initial2_pred = self.fluid_model(txy_ntk_initial2)
+
+    #     ntk_bc = compute_ntk(
+    #         self.fluid_model,
+    #         ntk_bc1_pred,
+    #         ntk_bc2_pred,
+    #     )
+    #     ntk_res = compute_ntk(
+    #         self.fluid_model,
+    #         torch.cat((ntk_continuity1, ntk_f_u1, ntk_f_v1), dim=1),
+    #         torch.cat((ntk_continuity2, ntk_f_u2, ntk_f_v2), dim=1),
+    #     )
+    #     ntk_ic = compute_ntk(
+    #         self.fluid_model,
+    #         ntk_initial1_pred,
+    #         ntk_initial2_pred,
+    #     )
+
+    #     self.trace_jacobian_bc_log.append(ntk_bc.item())
+    #     self.trace_jacobian_res_log.append(ntk_res.item())
+    #     self.trace_jacobian_ic_log.append(ntk_ic.item())
+
+    def _compute_decay_rate(self) -> float:
+        """
+        MOST IMPORTANT: Polynomial decay rate α where λ_k ∝ k^(-α)
+        Higher α = stronger spectral bias
+        """
+        ntk_batch_size = 64
+        txy_ntk_domain1, _ = self._get_batch("txy_domain", batch_size=ntk_batch_size)
+        txy_ntk_left1, _ = self._get_batch("txy_left", batch_size=ntk_batch_size)
+        txy_ntk_right1, _ = self._get_batch("txy_right", batch_size=ntk_batch_size)
+        txy_ntk_bottom1, _ = self._get_batch("txy_bottom", batch_size=ntk_batch_size)
+        txy_ntk_up1, _ = self._get_batch("txy_up", batch_size=ntk_batch_size)
+        txy_ntk_initial1, _ = self._get_batch("txy_initial", batch_size=ntk_batch_size)
+        ntk_bc1 = torch.cat(
+            (txy_ntk_left1, txy_ntk_right1, txy_ntk_bottom1, txy_ntk_up1), dim=0
+        )
+
+        ntk_bc1 = ntk_bc1[torch.randperm(ntk_bc1.shape[0])[:ntk_batch_size]]
+
+        txy_ntk_domain2, _ = self._get_batch("txy_domain", batch_size=ntk_batch_size)
+        txy_ntk_left2, _ = self._get_batch("txy_left", batch_size=ntk_batch_size)
+        txy_ntk_right2, _ = self._get_batch("txy_right", batch_size=ntk_batch_size)
+        txy_ntk_bottom2, _ = self._get_batch("txy_bottom", batch_size=ntk_batch_size)
+        txy_ntk_up2, _ = self._get_batch("txy_up", batch_size=ntk_batch_size)
+        txy_ntk_initial2, _ = self._get_batch("txy_initial", batch_size=ntk_batch_size)
+        ntk_bc2 = torch.cat(
+            (txy_ntk_left2, txy_ntk_right2, txy_ntk_bottom2, txy_ntk_up2), dim=0
+        )
+
+        ntk_bc2 = ntk_bc2[torch.randperm(ntk_bc2.shape[0])[:ntk_batch_size]]
+
+        ntk_bc = self._compute_full_ntk(self.fluid_model, ntk_bc1, ntk_bc2)
+        ntk_res = self._compute_full_ntk(
+            self.fluid_model, txy_ntk_domain1, txy_ntk_domain2
+        )
+
+        ntk_ic = self._compute_full_ntk(
+            self.fluid_model, txy_ntk_initial1, txy_ntk_initial2
+        )
+
+        self.trace_jacobian_bc_log.append(ntk_bc)
+        self.trace_jacobian_res_log.append(ntk_res)
+        self.trace_jacobian_ic_log.append(ntk_ic)

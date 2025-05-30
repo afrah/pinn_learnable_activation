@@ -1,8 +1,8 @@
+import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-import numpy as np
-from scipy.signal import savgol_filter
 from scipy.interpolate import UnivariateSpline
+from scipy.signal import savgol_filter
 
 
 def exponential_moving_average(data, alpha=0.1):
@@ -16,6 +16,7 @@ def exponential_moving_average(data, alpha=0.1):
 
 def smooth_loss(data, alpha=0.1, window_length=51, polyorder=3):
     """Applies a combination of EMA and Savitzky-Golay smoothing to the data."""
+
     ema_data = exponential_moving_average(data, alpha=alpha)
     if len(ema_data) < window_length:  # Avoid issues with short data
         window_length = len(ema_data) - 1 if len(ema_data) % 2 == 0 else len(ema_data)

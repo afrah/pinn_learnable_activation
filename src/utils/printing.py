@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def print_losses(model, epoch, elapsed):
     tloss = sum(model.epoch_loss[loss].item() for loss in model.config["loss_list"])
 
@@ -22,17 +25,16 @@ def print_losses(model, epoch, elapsed):
             f"max_eigH_res: {model.max_eig_hessian_res_log[-1]:.3e} | "
         )
     if model.trace_jacobian_bc_log:
-        additional_message += (
-            f"trace_jacobian_bc: {model.trace_jacobian_bc_log[-1]:.3e} | "
+        cond_bc = np.max(model.trace_jacobian_bc_log[-1]) / np.min(
+            model.trace_jacobian_bc_log[-1]
         )
-    if model.trace_jacobian_ic_log:
-        additional_message += (
-            f"trace_jacobian_ic: {model.trace_jacobian_ic_log[-1]:.3e} | "
+        cond_ic = np.max(model.trace_jacobian_ic_log[-1]) / np.min(
+            model.trace_jacobian_ic_log[-1]
         )
-    if model.trace_jacobian_res_log:
-        additional_message += (
-            f"trace_jacobian_res: {model.trace_jacobian_res_log[-1]:.3e} | "
+        cond_res = np.max(model.trace_jacobian_res_log[-1]) / np.min(
+            model.trace_jacobian_res_log[-1]
         )
+        additional_message += f"cond bc: {cond_bc:.3e} | cond ic: {cond_ic:.3e} | cond res: {cond_res:.3e} | "
 
     final_message = additional_message + message
     model.logger.print(final_message)

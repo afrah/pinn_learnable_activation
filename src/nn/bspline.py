@@ -168,7 +168,7 @@ class KANLinear(torch.nn.Module):
             self.b_splines(x).view(x.size(0), -1),
             self.scaled_spline_weight.view(self.out_features, -1),
         )
-        output = base_output + spline_output
+        output = spline_output
 
         output = output.view(*original_shape[:-1], self.out_features)
         return output
