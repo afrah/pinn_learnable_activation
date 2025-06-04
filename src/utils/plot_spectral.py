@@ -50,7 +50,7 @@ def plot_spectral(ax, data_list, index=1, y_max=None, label=False, smoothed_data
     ax.set_yscale("log")
     if index == 0:
         ax.set_xlabel(r"Epochs (x$10^3$) →", fontsize=15, color="grey")
-        ax.set_ylabel(r"Decaying rate (log) →", fontsize=15, color="grey")
+        ax.set_ylabel(r"log($\lambda_{max}$) →", fontsize=15, color="grey")
     ax.tick_params(axis="both", labelsize=14, colors="grey")
     ax.spines["top"].set_color("grey")
     ax.spines["bottom"].set_color("grey")

@@ -12,7 +12,7 @@ def plot_ntk_eigenvalues(
     col=None,
     y_max=None,
     label=False,
-    smoothed_data=True,
+    smoothed_data=False,
     eigenvalue_threshold=1e-6,
 ):
     """
@@ -62,8 +62,8 @@ def plot_ntk_eigenvalues(
 
     ax.set_yscale("log")
     if row == 2 and col == 0:
-        # ax.set_xlabel(r"# Eigenvalues →", fontsize=15, color="grey")
-        ax.set_ylabel(r"$\lambda$ (log) →", fontsize=15, color="grey")
+        ax.set_xlabel(r"# Eigenvalues →", fontsize=15, color="grey")
+        ax.set_ylabel(r"log($\lambda$) →", fontsize=15, color="grey")
     ax.tick_params(axis="both", labelsize=14, colors="grey")
     ax.spines["top"].set_color("grey")
     ax.spines["bottom"].set_color("grey")

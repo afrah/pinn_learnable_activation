@@ -260,10 +260,7 @@ class Trainer(BaseTrainer):
     #     self.trace_jacobian_ic_log.append(ntk_ic.item())
 
     def _compute_decay_rate(self) -> float:
-        """
-        MOST IMPORTANT: Polynomial decay rate α where λ_k ∝ k^(-α)
-        Higher α = stronger spectral bias
-        """
+        """ """
         ntk_batch_size = 64
         txy_ntk_domain1, _ = self._get_batch("txy_domain", batch_size=ntk_batch_size)
         txy_ntk_left1, _ = self._get_batch("txy_left", batch_size=ntk_batch_size)
