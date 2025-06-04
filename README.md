@@ -1,4 +1,10 @@
-# About
+# Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations
+
+
+[![arXiv](https://img.shields.io/badge/arXiv-2411.15111-b31b1b.svg)](https://arxiv.org/abs/2411.15111)
+
+
+## About
 
 This is the repository of the paper [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111) available on arXiv.
 
@@ -88,6 +94,12 @@ Plot convergence analysis
 - Klein_gordon convergence analysis: `klein_gordon_spectral_analysis.ipynb`
 - Wave convergence analysis: `wave_spectral_analysis.ipynb`
 - Diffusion convergence analysis: `diffusion_spectral_analysis.ipynb`
+
+
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
 
