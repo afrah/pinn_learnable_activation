@@ -14,6 +14,7 @@ def plot_ntk_eigenvalues(
     label=False,
     smoothed_data=False,
     eigenvalue_threshold=1e-6,
+    fontsize=15,
 ):
     """
     Usage:
@@ -62,9 +63,9 @@ def plot_ntk_eigenvalues(
 
     ax.set_yscale("log")
     if row == 2 and col == 0:
-        ax.set_xlabel(r"# Eigenvalues →", fontsize=15, color="grey")
-        ax.set_ylabel(r"log($\lambda$) →", fontsize=15, color="grey")
-    ax.tick_params(axis="both", labelsize=14, colors="grey")
+        ax.set_xlabel(r"$\lambda$ index →", fontsize=fontsize, color="grey")
+        ax.set_ylabel(r"log($\lambda$) →", fontsize=fontsize, color="grey")
+    ax.tick_params(axis="both", labelsize=fontsize, colors="grey")
     ax.spines["top"].set_color("grey")
     ax.spines["bottom"].set_color("grey")
     ax.spines["left"].set_color("grey")
@@ -74,10 +75,10 @@ def plot_ntk_eigenvalues(
     ax.set_facecolor("white")
     ax.grid(True, color="lightgrey")
 
-    if y_max is not None:
-        ax.set_ylim(top=y_max)
-    cutoff_idx = int(max_meaningful_idx * 1.2)
-    ax.set_xlim(right=cutoff_idx)
+    # if y_max is not None:
+    # ax.set_ylim(top=y_max)
+    cutoff_idx = int(max_meaningful_idx * 1.1)
+    # ax.set_xlim(right=cutoff_idx)
     # Stop the legend from being displayed
     ax.legend().set_visible(False)
 

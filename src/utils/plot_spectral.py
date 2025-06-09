@@ -4,8 +4,12 @@ from matplotlib import pyplot as plt
 
 from src.utils.plot_loss import smooth_loss
 
+fontsize = 15
 
-def plot_spectral(ax, data_list, index=1, y_max=None, label=False, smoothed_data=True):
+
+def plot_spectral(
+    ax, data_list, index=1, y_max=None, label=False, smoothed_data=True, fontsize=15
+):
     """
     Usage:
     plot_loss_history(data_list, save_path=None, y_max=None)
@@ -49,9 +53,9 @@ def plot_spectral(ax, data_list, index=1, y_max=None, label=False, smoothed_data
 
     ax.set_yscale("log")
     if index == 0:
-        ax.set_xlabel(r"Epochs (x$10^3$) →", fontsize=15, color="grey")
-        ax.set_ylabel(r"log($\lambda_{max}$) →", fontsize=15, color="grey")
-    ax.tick_params(axis="both", labelsize=14, colors="grey")
+        ax.set_xlabel(r"Epochs (x$10^3$) →", fontsize=fontsize, color="grey")
+        ax.set_ylabel(r"log($\lambda_{max}$) →", fontsize=fontsize, color="grey")
+    ax.tick_params(axis="both", labelsize=fontsize, colors="grey")
     ax.spines["top"].set_color("grey")
     ax.spines["bottom"].set_color("grey")
     ax.spines["left"].set_color("grey")
