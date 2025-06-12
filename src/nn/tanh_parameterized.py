@@ -14,15 +14,15 @@ def xavier_initialization(layer):
 class TanhParametarized(nn.Module):
     def __init__(self):
         super(TanhParametarized, self).__init__()
-        self.a = nn.Parameter(torch.ones(1))  # Learnable parameter for scaling
-        self.b = nn.Parameter(torch.zeros(1))  # Learnable parameter for shifting
+        self.a = nn.Parameter(torch.ones(1), requires_grad=True)
+        self.b = nn.Parameter(torch.zeros(1), requires_grad=True)
 
     def forward(self, x):
         return torch.tanh(self.a * x + self.b)
 
 
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation="tanh"):
+    def __init__(self, network, activation=None):
         super(PINNKAN, self).__init__()
         self.layers = nn.ModuleList()
         self.activation_function = TanhParametarized()

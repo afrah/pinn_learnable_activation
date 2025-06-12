@@ -68,7 +68,7 @@ class NaiveFourierKANLayer(torch.nn.Module):
 
 
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation, degree=4):
+    def __init__(self, network, activation=None, degree=4):
         super().__init__()
         self.network = network
         self.layers = nn.ModuleList()
@@ -85,16 +85,3 @@ class PINNKAN(nn.Module):
             x = layer(x)
 
         return x
-
-
-# class PINNKAN(nn.Module):
-#     def __init__(self, network, activation):
-#         super(PINNKAN, self).__init__()
-#         degree = 4
-#         self.model = FourierKAN(network, degree)
-#         self.activation = activation
-#         self.network = network
-#         self.layers = nn.ModuleList()
-
-#     def forward(self, x, x_min=0, x_max=1):
-#         return self.model(x)

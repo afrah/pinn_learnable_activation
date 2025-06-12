@@ -146,11 +146,8 @@ class FastKAN(nn.Module):
         return x
 
 
-
-
-
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation="tanh"):
+    def __init__(self, network, activation=None):
         super(PINNKAN, self).__init__()
         self.model = FastKAN(network)
         self.network = network

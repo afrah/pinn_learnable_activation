@@ -12,7 +12,6 @@ class JacobiKANLayer(nn.Module):
         self.alpha = alpha
         self.beta = beta
 
-        # Initialize Jacobi polynomial coefficients
         self.jacobi_coeffs = nn.Parameter(
             torch.empty(input_dim, output_dim, degree + 1)
         )
@@ -20,7 +19,7 @@ class JacobiKANLayer(nn.Module):
 
     def forward(self, x):
         x = torch.reshape(x, (-1, self.input_dim))
-        x = torch.tanh(x)  # Normalize x to [-1, 1]
+        x = torch.tanh(x)
         jacobi = torch.ones(
             x.shape[0], self.input_dim, self.degree + 1, device=x.device
         )
@@ -79,7 +78,6 @@ class Jacobikan(nn.Module):
         super(Jacobikan, self).__init__()
         self.network = network
 
-        # Create the layers using a loop
         self.layers = nn.ModuleList()
         for i in range(len(network) - 1):
             self.layers.append(
@@ -87,9 +85,8 @@ class Jacobikan(nn.Module):
             )
 
     def forward(self, x):
-        x = x.view(-1, self.network[0])  # Flatten the images
+        x = x.view(-1, self.network[0])
 
-        # Forward pass through layers using a loop
         for layer in self.layers:
             x = layer(x)
 
@@ -97,7 +94,7 @@ class Jacobikan(nn.Module):
 
 
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation):
+    def __init__(self, network, activation=None):
         super(PINNKAN, self).__init__()
         self.model = Jacobikan(network)
         self.activation = activation

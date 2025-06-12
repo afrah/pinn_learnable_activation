@@ -66,7 +66,7 @@ class ChebyKAN(nn.Module):
 
 
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation):
+    def __init__(self, network, activation=None):
         super(PINNKAN, self).__init__()
         degree = 4
         self.model = ChebyKAN(network, degree)

@@ -1,7 +1,7 @@
-import torch.optim
 import torch.nn as nn
-import torch.nn.init as init
 import torch.nn.functional as F
+import torch.nn.init as init
+import torch.optim
 
 
 def xavier_initialization(layer):
@@ -12,7 +12,7 @@ def xavier_initialization(layer):
 
 
 class PINNKAN(nn.Module):
-    def __init__(self, network, activation="tanh2"):
+    def __init__(self, network, activation=None):
         super(PINNKAN, self).__init__()
         self.layers = nn.ModuleList()
         self.network = network
