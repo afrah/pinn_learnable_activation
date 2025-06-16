@@ -10,12 +10,7 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 
 
 ## Animation Demo
-
-<!-- Upload your MP4 file to your repo -->
-<video width="560" height="315" controls>
-  <source src="gif/all_animations2.mp4" type="video/mp4">
-</video>
-
+https://user-images.githubusercontent.com/23558090/115278602-ee6f0280-a145-11eb-94ae-6edaa846ab7f.mp4
 ## Project structure
 
 ```bash
