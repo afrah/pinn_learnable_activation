@@ -12,7 +12,7 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 ## Animation Demo
 [Spectral bias analysis](./gif/all_animations2.mp4)
 or 
-[use this link](https://www.youtube.com/watch?v=YAx5h4zUmv8)
+[use this link](https://www.youtube.com/watch?v=YAx5h4zUmv8)[All models combined]
 
 
 https://github.com/user-attachments/assets/419ecc14-4497-46e3-b292-459517d0e032
