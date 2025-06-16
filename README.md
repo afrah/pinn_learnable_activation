@@ -11,7 +11,11 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 
 ## Animation Demo
 
-[![Neural Network Training Visualization](./gif/all_animations2.mp4)](./gif/all_animations2.mp4)
+<!-- Upload your MP4 file to your repo -->
+<video width="560" height="315" controls>
+  <source src="gif/all_animations2.mp4" type="video/mp4">
+</video>
+
 ## Project structure
 
 ```bash
