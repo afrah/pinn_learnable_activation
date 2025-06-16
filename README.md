@@ -13,6 +13,9 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 [Spectral bias analysis](./gif/all_animations2.mp4)
 or 
 [use this link](https://www.youtube.com/watch?v=YAx5h4zUmv8)
+
+
+[bspline + silu](gif/2025-06-16_15-23-56-550055_animation.mp4)
 ## Project structure
 
 ```bash
