@@ -10,7 +10,7 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 
 
 ## Animation Demo
-[spectral bias analysis](./gif/all_animations2/mp4)
+[spectral bias analysis](./gif/all_animations2.mp4)
 ## Project structure
 
 ```bash
