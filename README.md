@@ -15,7 +15,12 @@ or
 [use this link](https://www.youtube.com/watch?v=YAx5h4zUmv8)
 
 
-[bspline](gif/2025-06-16_15-33-30-611314_animation.mp4)
+[bspline]
+
+
+https://github.com/user-attachments/assets/c48de887-42cc-49d8-a2c6-7e0c345e895b
+
+
 ## Project structure
 
 ```bash
