@@ -144,6 +144,24 @@ copy_models.ipynb
 
 checkpoints/
 testing_checkpoints/
+\rules
 
 
  
+src/utils/combine_mp4_videos.py
+src/utils/combine_gifs.py
+src/utils/fsi_visualization.py
+src/utils/fsi_animation.py
+src/trainer/spectral_test
+result/simple_spectral_test
+gif/gif
+gif/2025-06-16_15-23-56-550055_animation.mp4
+gif/2025-06-16_15-33-30-611314_animation.mp4
+gif/2025-06-16_15-34-53-200596_animation.mp4
+gif/2025-06-16_15-35-47-393683_animation.mp4
+gif/2025-06-16_15-37-13-361307_animation.mp4
+gif/2025-06-16_16-09-33-188557_animation.mp4
+gif/2025-06-16_16-12-53-067559_animation.mp4
+gif/2025-06-16_16-13-54-042695_animation.mp4
+gif/2025-06-16_16-34-20-361763_animation.mp4
+gif/2025-06-16_18-06-55-380166_animation.mp4
