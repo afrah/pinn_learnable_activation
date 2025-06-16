@@ -11,7 +11,7 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 
 ## Animation Demo
 
-![Animation Demo](./gif/all_animations.mp4)
+![Animation Demo](./gif/all_animations2.mp4)
 
 ## Project structure
 
