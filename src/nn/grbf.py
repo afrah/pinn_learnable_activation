@@ -76,9 +76,8 @@ class FastKANLayer(nn.Module):
         else:
             spline_basis = self.rbf(x)
         ret = self.spline_linear(spline_basis.view(*spline_basis.shape[:-2], -1))
-        if self.use_base_update:
-            base = self.base_linear(self.base_activation(x))
-            ret = ret + base
+        base = self.base_linear(self.base_activation(x))
+        ret = ret + base
         return ret
 
     def plot_curve(
@@ -101,12 +100,12 @@ class FastKANLayer(nn.Module):
         assert output_index < self.output_dim
         w = self.spline_linear.weight[
             output_index, input_index * ng : (input_index + 1) * ng
-        ]  # num_grids,
+        ]
         x = torch.linspace(
             self.rbf.grid_min - num_extrapolate_bins * h,
             self.rbf.grid_max + num_extrapolate_bins * h,
             num_pts,
-        )  # num_pts, num_grids
+        )
         with torch.no_grad():
             y = (w * self.rbf(x.to(w.dtype))).sum(-1)
         return x, y
@@ -119,7 +118,7 @@ class FastKAN(nn.Module):
         grid_min: float = -2.0,
         grid_max: float = 2.0,
         num_grids: int = 8,
-        use_base_update: bool = False,
+        use_base_update: bool = True,
         base_activation=F.tanh,
         spline_weight_init_scale: float = 0.1,
     ) -> None:

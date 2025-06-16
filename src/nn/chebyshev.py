@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 
 
-# This is inspired by Kolmogorov-Arnold Networks but using Chebyshev 2nd kind polynomials instead of splines coefficients
 class ChebyKANLayer(nn.Module):
     def __init__(self, input_dim, output_dim, degree):
         super(ChebyKANLayer, self).__init__()
@@ -23,7 +22,6 @@ class ChebyKANLayer(nn.Module):
         # We need to normalize x to [-1, 1] using tanh
         x = torch.tanh(x)  # Normalize x to [-1, 1]
 
-        # Initialize Chebyshev polynomial tensors
         cheby2 = torch.ones(x.shape[0], self.inputdim, self.degree + 1, device=x.device)
         if self.degree > 0:
             cheby2[:, :, 1] = x
@@ -31,7 +29,6 @@ class ChebyKANLayer(nn.Module):
             cheby2[:, :, i] = (
                 2 * x * cheby2[:, :, i - 1].clone() - cheby2[:, :, i - 2].clone()
             )
-        # Compute the Chebyshev interpolation
         y = torch.einsum(
             "bid,iod->bo", cheby2, self.cheby2_coeffs
         )  # shape = (batch_size, outdim)
@@ -44,7 +41,6 @@ class ChebyKAN(nn.Module):
         super(ChebyKAN, self).__init__()
         self.network = network
         self.layers = nn.ModuleList()
-        # self.layer_norms = nn.ModuleList()
 
         for i in range(len(network) - 1):
             self.layers.append(ChebyKANLayer(network[i], network[i + 1], degree))
@@ -55,7 +51,6 @@ class ChebyKAN(nn.Module):
     def forward(self, x):
         x = x.view(-1, self.network[0])  # Flatten the images
 
-        # Forward pass through layers using a loop
         for i, layer in enumerate(self.layers):
             x = layer(x)
             # # Apply LayerNorm if it's not the last layer
