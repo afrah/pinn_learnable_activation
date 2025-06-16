@@ -11,7 +11,7 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 
 ## Animation Demo
 
-![Animation Demo](./gif/all_animations.mp4)
+![Animation Demo](./gif/all_animations2.mp4)
 
 ## Project structure
 
@@ -20,7 +20,8 @@ This is the repository of the paper [Learnable Activation Functions in Physics-I
 ├── data           /* PDE data */
 ├── model          /* Final trained models - copied from checkpoints */
 ├── result         /* Final training logs/figures */
-└── src
+└── src 
+
    ├── data        /* PyTorch data loaders */
    ├── nn          /* PINN code, e.g., Cavity, Wave, etc.*/
    ├── notebooks   /* Test models, generate plots, various other notebooks */
