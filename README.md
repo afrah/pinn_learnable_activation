@@ -15,11 +15,25 @@ or
 [use this link](https://www.youtube.com/watch?v=YAx5h4zUmv8)
 
 
-[bspline]
+https://github.com/user-attachments/assets/419ecc14-4497-46e3-b292-459517d0e032
 
+https://github.com/user-attachments/assets/29d88192-56a1-4af6-ae99-7596be38022d
+
+https://github.com/user-attachments/assets/135d4a47-dec7-4dcf-bca2-bef0b1d3d4f2
 
 https://github.com/user-attachments/assets/c48de887-42cc-49d8-a2c6-7e0c345e895b
 
+https://github.com/user-attachments/assets/07b0dac6-6faa-43c7-886c-ef8e40616760
+
+https://github.com/user-attachments/assets/375870af-6003-4ab3-9195-4d2c684367f8
+
+https://github.com/user-attachments/assets/5edddd43-da4f-4c8d-940f-3bae0253b931
+
+https://github.com/user-attachments/assets/8f44a2a3-ce40-4f7d-9549-eeef99abdfff
+
+https://github.com/user-attachments/assets/d1e4af12-4b85-4fe9-9459-70adee11b31f
+
+https://github.com/user-attachments/assets/eadb5bad-d2b3-42a1-8c8e-1dbd110aacd3
 
 ## Project structure
 
