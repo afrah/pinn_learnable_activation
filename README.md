@@ -8,7 +8,10 @@ This repository contains all the source code, data, and checkpoints reported in 
 
 ## Animation Demo
 
-Through animation, we demonstrated how different activation functions manage spectral bias and convergence in simple cases. In the paper, we discussed five PDEs: Helmholtz, Wave, Klein-Gordon, Convection-Diffusion, and Cavity. To analyze spectral bias with these PDEs, refer to the provided notebooks, and instructions on how to run them are below.
+In the paper, we discussed five PDEs: Helmholtz, Wave, Klein-Gordon, Convection-Diffusion, and Cavity. 
+To analyze spectral bias with these PDEs, refer to the provided notebooks, and instructions on how to run them are below.
+
+Here in this animation, we demonstrate how different activation functions manage spectral bias and convergence in a simple example.
 
 ### Tanh
 
