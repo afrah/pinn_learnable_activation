@@ -1,17 +1,14 @@
 # Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations
 
-
 [![arXiv](https://img.shields.io/badge/arXiv-2411.15111-b31b1b.svg)](https://arxiv.org/abs/2411.15111)
-
 
 ## About
 
-This is the repository of the paper [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111) available on arXiv.
-
+This repository contains all the source code, data, and checkpoints reported in our paper [Learnable Activation Functions in Physics-Informed Neural Networks for Solving Partial Differential Equations](https://arxiv.org/abs/2411.15111) available on arXiv.
 
 ## Animation Demo
 
-We illustrated how various activation funstions deal with spectral bias and convergence using simple cases.
+Through animation, we demonstrated how different activation functions manage spectral bias and convergence in simple cases. In the paper, we discussed five PDEs: Helmholtz, Wave, Klein-Gordon, Convection-Diffusion, and Cavity. To analyze spectral bias with these PDEs, refer to the provided notebooks, and instructions on how to run them are below.
 
 ### Tanh
 
