@@ -135,6 +135,9 @@ Plot convergence analysis:
 - Wave convergence analysis: `wave_spectral_analysis.ipynb`
 - Diffusion convergence analysis: `diffusion_spectral_analysis.ipynb`
 
+## Support & Contribution
+
+If you have a question or suggestion, and would like to contribute to the repository, please create a GitHub issue or email me. 
 
 ## License
 
@@ -151,5 +154,6 @@ If you find this work useful, we would appreciate it if you could consider citin
   journal={arXiv preprint arXiv:2411.15111},
   year={2024}
 }
+```
 
 Thank you for taking the time to browse our work!
