@@ -106,11 +106,12 @@ python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --pri
 python -m src.trainer.main_trainer --total_epochs 60000  --save_every 1000 --print_every 1000 --batch_size 128 --log_path ./checkpoints --solver tanh --problem diffusion  --weights "[10.0, 10.0, 1.0]" --network "[3, 300, 300, 300, 1]"
 
 ```
-## Notebooks for Genrating Plots
+
+## Notebooks
 
 We provided all pre-trained models and training loss log history. The notebooks can be run independently of training models.
 
-Test models
+Test models:
 
 - Cavity: `cavity_test_model.ipynb`
 - Helmholtz: `helmholtz_test_model.ipynb`
@@ -118,15 +119,14 @@ Test models
 - Wave: `wave_test_model.ipynb`
 - Diffusion: `diffusion_test_model.ipynb`
 
-Plot loss history and test results (e.g.):
+Plot loss history and test results:
 
 - Cavity training loss history: `cavity_plot_training_loss_history.ipynb`
 - Cavity contour plot of test and error: `cavity_plot_contour.ipynb`
-
 - Helmholtz training loss history: `helmholtz_plot_training_loss_history.ipynb`
 - Helmholtz contour plot of test and error: `helmholtz_plot_contour.ipynb`
 
-Plot convergence analysis
+Plot convergence analysis:
 
 - Cavity convergence analysis: `cavity_spectral_analysis.ipynb`
 - Helmholtz convergence analysis: `helmholtz_spectral_analysis.ipynb`
@@ -134,7 +134,6 @@ Plot convergence analysis
 - Klein_gordon convergence analysis: `klein_gordon_spectral_analysis.ipynb`
 - Wave convergence analysis: `wave_spectral_analysis.ipynb`
 - Diffusion convergence analysis: `diffusion_spectral_analysis.ipynb`
-
 
 
 ## License
@@ -153,3 +152,4 @@ If you find this work useful, we would appreciate it if you could consider citin
   year={2024}
 }
 
+Thank you for taking the time to browse our work!
