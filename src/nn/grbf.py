@@ -76,8 +76,8 @@ class FastKANLayer(nn.Module):
         else:
             spline_basis = self.rbf(x)
         ret = self.spline_linear(spline_basis.view(*spline_basis.shape[:-2], -1))
-        base = self.base_linear(self.base_activation(x))
-        ret = ret + base
+        # base = self.base_linear(self.base_activation(x))
+        ret = ret #+ base
         return ret
 
     def plot_curve(
@@ -118,7 +118,7 @@ class FastKAN(nn.Module):
         grid_min: float = -2.0,
         grid_max: float = 2.0,
         num_grids: int = 8,
-        use_base_update: bool = True,
+        use_base_update: bool = False,
         base_activation=F.tanh,
         spline_weight_init_scale: float = 0.1,
     ) -> None:

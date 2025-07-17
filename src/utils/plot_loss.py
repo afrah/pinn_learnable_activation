@@ -123,4 +123,4 @@ def plot_loss_history(data_list, save_path=None, y_max=None):
     legend.get_frame().set_facecolor("white")  # Set legend box background to white
 
     plt.tight_layout()
-    plt.savefig(save_path)
+    plt.savefig(save_path + ".pdf", dpi=300, bbox_inches="tight")
