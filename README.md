@@ -17,7 +17,7 @@ Here in this animation, we demonstrate how different activation functions manage
 
 https://github.com/user-attachments/assets/419ecc14-4497-46e3-b292-459517d0e032
 
-### Silu
+### SilU
 
 https://github.com/user-attachments/assets/29d88192-56a1-4af6-ae99-7596be38022d
 
