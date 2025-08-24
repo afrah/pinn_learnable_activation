@@ -40,7 +40,7 @@ https://github.com/user-attachments/assets/375870af-6003-4ab3-9195-4d2c684367f8
 
 https://github.com/user-attachments/assets/5edddd43-da4f-4c8d-940f-3bae0253b931
 
-### B-spline + Silu
+### B-spline + SilU
 
 https://github.com/user-attachments/assets/8f44a2a3-ce40-4f7d-9549-eeef99abdfff
 
@@ -48,7 +48,7 @@ https://github.com/user-attachments/assets/8f44a2a3-ce40-4f7d-9549-eeef99abdfff
 
 https://github.com/user-attachments/assets/d1e4af12-4b85-4fe9-9459-70adee11b31f
 
-### GRBF + Silu
+### GRBF + SilU
 
 https://github.com/user-attachments/assets/eadb5bad-d2b3-42a1-8c8e-1dbd110aacd3
 
