@@ -1,6 +1,5 @@
 import torch
 
-# Parameters of equations
 a = 0.5
 c = 2
 
@@ -25,7 +24,6 @@ class Sampler:
         return x, y
 
 
-# Define the exact solution and its derivatives
 def u(x, a, c):
     """
     :param x: x = (t, x)
@@ -76,7 +74,6 @@ def r(x, a, c):
 
 def generate_training_dataset(device):
 
-    # Domain boundaries
     ics_coords = torch.tensor(
         [[0.0, 0.0], [0.0, 1.0]], dtype=torch.float32, device=device
     )
@@ -111,12 +108,3 @@ def generate_training_dataset(device):
 
     return [ics_sampler, bcs_sampler, res_sampler]
 
-
-# # Example usage
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# dataset = generate_training_dataset(device)
-
-# # Sampling example (e.g., for initial condition sampling)
-# ics_sampler, bcs_sampler, coll_sampler, res_sampler = dataset
-# x, y = ics_sampler.sample(100)
-# print(x, y)
