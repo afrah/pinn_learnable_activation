@@ -1,6 +1,5 @@
 import torch
 
-# Parameters of the equation
 default_D = 0.01  # Diffusion coefficient
 default_v_x = 1.0  # Convection velocity in x direction
 default_v_y = 1.0  # Convection velocity in y direction
@@ -16,7 +15,6 @@ class Sampler:
         self.device = device
 
     def sample(self, N):
-        # Generate random samples within the specified range on the correct device
         rand_vals = torch.rand(N, self.dim, device=self.device)
         x = (
             self.coords[0:1, :]
@@ -26,7 +24,6 @@ class Sampler:
         return x, y
 
 
-# Define the exact solution and its derivatives for the convection-diffusion equation
 def u(txy):
     time_ = txy[:, 0:1]
     x = txy[:, 1:2]
@@ -47,11 +44,11 @@ def u_y(txy):
 
 
 def u_xx(txy):
-    return (20000 * (txy[:, 1:2] - 0.5) ** 2 - 100) * u(txy)
+    return (40000 * (txy[:, 1:2] - 0.5) ** 2 - 200) * u(txy)
 
 
 def u_yy(txy):
-    return (20000 * (txy[:, 2:3] - 0.5) ** 2 - 100) * u(txy)
+    return (40000 * (txy[:, 2:3] - 0.5) ** 2 - 200) * u(txy)
 
 
 def r(txy, Diffusion=default_D, v_x=default_v_x, v_y=default_v_y):
@@ -62,7 +59,6 @@ def r(txy, Diffusion=default_D, v_x=default_v_x, v_y=default_v_y):
 
 def generate_training_dataset(device):
 
-    # Domain boundaries
     ics_coords = torch.tensor(
         [[0.0, 0.0, 0.0], [0.0, 1.0, 1.0]], dtype=torch.float32, device=device
     )
@@ -76,7 +72,6 @@ def generate_training_dataset(device):
         [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]], dtype=torch.float32, device=device
     )
 
-    # Create initial conditions samplers
     ics_sampler = Sampler(3, ics_coords, u, name="Initial Condition", device=device)
 
     # Create boundary conditions samplers
@@ -84,18 +79,7 @@ def generate_training_dataset(device):
     bc2 = Sampler(3, bc2_coords, u, name="Dirichlet BC2", device=device)
     bcs_sampler = [bc1, bc2]
 
-    # Create residual sampler
     res_sampler = Sampler(3, dom_coords, r, name="Forcing", device=device)
 
     return [ics_sampler, bcs_sampler, res_sampler]
 
-
-# # Example usage
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# dataset = generate_training_dataset(device)
-
-# # Sampling example
-# ics_sampler, bcs_sampler, coll_sampler, res_sampler = dataset
-# x, y = bcs_sampler[0].sample(10)
-# print(x)
-# print(y)
