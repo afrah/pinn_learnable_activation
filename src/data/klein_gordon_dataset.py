@@ -52,7 +52,6 @@ def f(x, alpha, beta, gamma, k):
 
 
 def generate_training_dataset(device):
-    # Domain boundaries, ensuring they are created on the correct device
 
     # Parameters of equations
     alpha = -1.0
@@ -73,17 +72,14 @@ def generate_training_dataset(device):
         [[0.0, 0.0], [1.0, 1.0]], dtype=torch.float32, device=device
     )
 
-    # Create initial conditions sampler
     ics_sampler = Sampler(
         2, ics_coords, lambda x: u(x), name="Initial Condition 1", device=device
     )
 
-    # Create boundary conditions samplers
     bc1 = Sampler(2, bc1_coords, lambda x: u(x), name="Dirichlet BC1", device=device)
     bc2 = Sampler(2, bc2_coords, lambda x: u(x), name="Dirichlet BC2", device=device)
     bcs_sampler = [bc1, bc2]
 
-    # Create residual sampler
     res_sampler = Sampler(
         2,
         dom_coords,
@@ -94,12 +90,3 @@ def generate_training_dataset(device):
 
     return [ics_sampler, bcs_sampler, res_sampler]
 
-
-# # Example usage
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# dataset = generate_training_dataset(device)
-
-# # Sampling example (e.g., for initial condition sampling)
-# ics_sampler, bcs_sampler, res_sampler = dataset
-# x, y = ics_sampler.sample(100)
-# print(x, y)
